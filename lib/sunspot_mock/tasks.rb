@@ -1,3 +1,4 @@
+require 'sunspot_mock'
 namespace :sunspot do
   namespace :solr do
     desc 'stub: Start the Solr instance'
@@ -7,8 +8,8 @@ namespace :sunspot do
       #   abort("This command is not supported on #{RUBY_PLATFORM}. " +
       #         "Use rake sunspot:solr:run to run Solr in the foreground.")
       # end
-      # # server.start
-      # puts 'Successfully started Solr ...'
+      SunspotMock.server
+      puts 'Successfully started Solr ...'
     end
 
     desc 'stub: Run the Solr instance in the foreground'
