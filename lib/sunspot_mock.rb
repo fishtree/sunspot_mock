@@ -105,7 +105,7 @@ class TimeOutError < StandardError; end;
         sleep(0.1)
       end
       raise TimeOutError, "Solr failed to start after #{solr_startup_timeout} seconds" unless solr_running?
-
+	  sleep(2) # wait a bit untill the server starts up
     end
 
     def solr_running?
