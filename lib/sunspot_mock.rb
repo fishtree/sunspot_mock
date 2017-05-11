@@ -50,7 +50,6 @@ class TimeOutError < StandardError; end;
       unless solr_running?
       
         # puts "Starting solr instance for #{ENV['RACK_ENV']} environment..."
-
         pid = fork do      
           $stderr.reopen("/dev/null", "w")
           $stdout.reopen("/dev/null", "w")
@@ -59,15 +58,22 @@ class TimeOutError < StandardError; end;
 
         init
         
-        # server.start
         at_exit do 
-         # byebug
+
           Process.kill("TERM", pid) 
-           # server.stop          
+          
+          if File.exist?(server.solr_home) and server.port
+			stop_solr_command = "solr stop -p #{server.port}"
+          	log_file = "./#{ENV['RACK_ENV']}/data/tlog/sunspot_mock.log"
+		  	FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command} >> #{log_file}") }
+		  	# TODO :should we remove the bootstrapped solr folder
+		  	# exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
+		  end
+
         end
 
-        wait_until_solr_starts  
-        
+        wait_until_solr_starts 
+         
       end
     end
 
@@ -99,6 +105,7 @@ class TimeOutError < StandardError; end;
         sleep(0.1)
       end
       raise TimeOutError, "Solr failed to start after #{solr_startup_timeout} seconds" unless solr_running?
+
     end
 
     def solr_running?
