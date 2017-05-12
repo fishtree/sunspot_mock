@@ -28,7 +28,7 @@ class TimeOutError < StandardError; end;
 
     def init
 
-        config = Sunspot::Configuration.build
+        config = Sunspot::Configuration.build                
         builder = server.scheme == 'http' ? URI::HTTP : URI::HTTPS
         config.solr.url = builder.build(
           :host => server.hostname,
@@ -36,16 +36,19 @@ class TimeOutError < StandardError; end;
           :path => server.path,
           :userinfo => server.userinfo
         ).to_s
+        config.solr.url = config.solr.url + "/test" if ENV['RACK_ENV'] == 'test'
         # config.solr.read_timeout = server.read_timeout
         # config.solr.open_timeout = server.open_timeout
         # config.solr.proxy = server.proxy
         # config.solr.url = server.hostname
 
+        puts "Server.url  -> #{server.url}"
+        puts "server  -> #{server.to_s}"
         puts "config.solr.url  -> #{config.solr.url}"
 
-        puts "PRE Sunspot.Session -> #{Sunspot.session}"
+        puts "PRE Sunspot.Session -> #{Sunspot.session.to_s}"
         Sunspot.session =  Sunspot::SessionProxy::ThreadLocalSessionProxy.new(config)
-        puts "POST Sunspot.Session -> #{Sunspot.session}"
+        puts "POST Sunspot.Session -> #{Sunspot.session.to_s}"
 
     end
 
