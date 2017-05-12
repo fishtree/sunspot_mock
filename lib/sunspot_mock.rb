@@ -29,17 +29,17 @@ class TimeOutError < StandardError; end;
     def init
 
         config = Sunspot::Configuration.build
-        # builder = server.scheme == 'http' ? URI::HTTP : URI::HTTPS
-        # config.solr.url = builder.build(
-        #   :host => server.hostname,
-        #   :port => server.port,
-        #   :path => server.path,
-        #   :userinfo => server.userinfo
-        # ).to_s
+        builder = server.scheme == 'http' ? URI::HTTP : URI::HTTPS
+        config.solr.url = builder.build(
+          :host => server.hostname,
+          :port => server.port,
+          :path => server.path,
+          :userinfo => server.userinfo
+        ).to_s
         # config.solr.read_timeout = server.read_timeout
         # config.solr.open_timeout = server.open_timeout
         # config.solr.proxy = server.proxy
-        config.solr.url = server.hostname
+        # config.solr.url = server.hostname
 
         puts "config.solr.url  -> #{config.solr.url}"
 
