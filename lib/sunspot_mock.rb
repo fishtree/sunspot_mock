@@ -42,7 +42,6 @@ class TimeOutError < StandardError; end;
         # config.solr.proxy = server.proxy
         # config.solr.url = server.hostname
 
-        puts "Server.url  -> #{server.url}"
         puts "server  -> #{server.to_s}"
         puts "config.solr.url  -> #{config.solr.url}"
 
