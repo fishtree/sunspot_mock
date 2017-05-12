@@ -36,7 +36,6 @@ class TimeOutError < StandardError; end;
           :path => server.path,
           :userinfo => server.userinfo
         ).to_s
-        config.solr.url = config.solr.url + "/test" if ENV['RACK_ENV'] == 'test'
         # config.solr.read_timeout = server.read_timeout
         # config.solr.open_timeout = server.open_timeout
         # config.solr.proxy = server.proxy
