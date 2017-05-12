@@ -41,40 +41,31 @@ class TimeOutError < StandardError; end;
         # config.solr.proxy = server.proxy
         # config.solr.url = server.hostname
 
-        puts "server  -> #{server.to_s}"
-        puts "config.solr.url  -> #{config.solr.url}"
-
-        puts "PRE Sunspot.Session -> #{Sunspot.session.to_s}"
         Sunspot.session =  Sunspot::SessionProxy::ThreadLocalSessionProxy.new(config)
-        puts "POST Sunspot.Session -> #{Sunspot.session.to_s}"
 
     end
 
     def start_sunspot_server
       
-      puts "solr_running? -> #{solr_running?}"
       unless solr_running?
       
-        # puts "Starting solr instance for #{ENV['RACK_ENV']} environment..."
+        puts "Starting solr instance for #{ENV['RACK_ENV']} environment..."
         pid = fork do      
           $stderr.reopen("/dev/null", "w")
           $stdout.reopen("/dev/null", "w")
           server.start
         end
 
-        puts "pid  -> #{pid}"
-
         init
         
         at_exit do 
 
-          Process.kill("TERM", pid)          
+          Process.kill("TERM", pid)         
+          server.stop
 	        # stop_solr_command = "./solr stop -p #{server.port}"
           # exec ("#{stop_solr_command}") unless server.port.blank?
-          server.stop
           # TODO :should we remove the bootstrapped solr folder
           # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
-
           # FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command}") }
         end
 
@@ -116,7 +107,6 @@ class TimeOutError < StandardError; end;
 
     def solr_running?
       begin
-        puts "Solr Url -> #{Sunspot.session.config.solr.url}"
         solr_ping_uri = URI.parse("#{Sunspot.session.config.solr.url}/ping")
         Net::HTTP.get(solr_ping_uri)
         true # Solr Running
