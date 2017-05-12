@@ -70,13 +70,14 @@ class TimeOutError < StandardError; end;
         at_exit do 
 
           Process.kill("TERM", pid)          
-          if File.exist?(server.solr_home) and server.port
-			       stop_solr_command = "solr stop -p #{server.port}"
-          	 log_file = "./#{ENV['RACK_ENV']}/data/tlog/sunspot_mock.log"
-		  	     FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command} >> #{log_file}") }
-		  	     # TODO :should we remove the bootstrapped solr folder
-		  	     # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
-		      end
+        #   if File.exist?(server.solr_home) and server.port
+			     #   stop_solr_command = "solr stop -p #{server.port}"
+        #   	 log_file = "./#{ENV['RACK_ENV']}/data/tlog/sunspot_mock.log"
+		  	   #   FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command} >> #{log_file}") }
+        
+		  	   #   # TODO :should we remove the bootstrapped solr folder
+		  	   #   # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
+		      # end
 
         end
 
