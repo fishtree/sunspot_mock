@@ -59,7 +59,7 @@ class TimeOutError < StandardError; end;
         pid = fork do      
           $stderr.reopen("/dev/null", "w")
           $stdout.reopen("/dev/null", "w")
-          server.run
+          server.start
         end
 
         puts "pid  -> #{pid}"
@@ -69,8 +69,9 @@ class TimeOutError < StandardError; end;
         at_exit do 
 
           Process.kill("TERM", pid)          
-	        stop_solr_command = "solr stop -p #{server.port}"
-          exec ("#{stop_solr_command}") unless server.port.blank?
+	        # stop_solr_command = "./solr stop -p #{server.port}"
+          # exec ("#{stop_solr_command}") unless server.port.blank?
+          server.stop
           # TODO :should we remove the bootstrapped solr folder
           # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
 
