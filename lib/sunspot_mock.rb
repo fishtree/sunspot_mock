@@ -49,8 +49,7 @@ class TimeOutError < StandardError; end;
       
       unless solr_running?
       
-        puts "Starting solr instance for #{ENV['RACK_ENV']} environment..."
-        pid = fork do      
+        pid_start = fork do      
           $stderr.reopen("/dev/null", "w")
           $stdout.reopen("/dev/null", "w")
           server.start
@@ -60,12 +59,22 @@ class TimeOutError < StandardError; end;
         
         at_exit do 
 
-          Process.kill("TERM", pid)         
-          server.stop
+          Process.kill("TERM", pid_start)      
+
+          pid_stop = fork do      
+            $stderr.reopen("/dev/null", "w")
+            $stdout.reopen("/dev/null", "w")
+            server.stop
+          end
+          sleep(5)
+
+          Process.kill("TERM", pid_stop)      
 	        # stop_solr_command = "./solr stop -p #{server.port}"
           # exec ("#{stop_solr_command}") unless server.port.blank?
           # TODO :should we remove the bootstrapped solr folder
-          # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) 
+
+          FileUtils.rm_r( server.solr_home ) if File.exist?(server.solr_home) and server.solr_home != "/"
+          # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) and server.solr_home != "/"
           # FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command}") }
         end
 
