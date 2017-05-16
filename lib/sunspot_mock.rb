@@ -18,7 +18,8 @@ class TimeOutError < StandardError; end;
     end
 
     def setup_solr
-      unstub
+      # unstub
+      init_session
       start_sunspot_server
     end
 
@@ -26,7 +27,7 @@ class TimeOutError < StandardError; end;
       @server ||= Sunspot::Mock::Server.new
     end
 
-    def init
+    def init_session
 
         config = Sunspot::Configuration.build                
         builder = server.scheme == 'http' ? URI::HTTP : URI::HTTPS
@@ -41,8 +42,9 @@ class TimeOutError < StandardError; end;
         # config.solr.proxy = server.proxy
         # config.solr.url = server.hostname
 
+        original_sunspot_session #As prevention that this is the first test (so original version will be saved for later stubs)
         Sunspot.session =  Sunspot::SessionProxy::ThreadLocalSessionProxy.new(config)
-
+        @session_stubbed = false
     end
 
     def start_sunspot_server
@@ -54,9 +56,7 @@ class TimeOutError < StandardError; end;
           $stdout.reopen("/dev/null", "w")
           server.start
         end
-
-        init
-        
+      
         at_exit do 
 
           Process.kill("TERM", pid_start)      
@@ -66,16 +66,12 @@ class TimeOutError < StandardError; end;
             $stdout.reopen("/dev/null", "w")
             server.stop
           end
-          sleep(5)
+          sleep(3)
 
           Process.kill("TERM", pid_stop)      
-	        # stop_solr_command = "./solr stop -p #{server.port}"
-          # exec ("#{stop_solr_command}") unless server.port.blank?
-          # TODO :should we remove the bootstrapped solr folder
-
+          # TODO :should we remove the bootstrapped solr folder??
           FileUtils.rm_r( server.solr_home ) if File.exist?(server.solr_home) and server.solr_home != "/"
-          # exec ("rm -rf #{server.solr_home}") if File.exist?(server.solr_home) and server.solr_home != "/"
-          # FileUtils.cd( server.solr_home )  { exec ("#{stop_solr_command}") }
+
         end
 
         wait_until_solr_starts 
