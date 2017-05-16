@@ -4,7 +4,7 @@ require 'yaml'
 module Sunspot #:nodoc:
   module Mock #:nodoc:
     #
-    # Sunspot::Fishtree is configured via the config/sunspot.yml file, which
+    # Sunspot::Mock is configured via the config/sunspot.yml file, which
     # contains properties keyed by environment name. A sample sunspot.yml file
     # would look like:
     #
@@ -46,7 +46,7 @@ module Sunspot #:nodoc:
     #     auto_remove_callback: after_commit
     #     auto_commit_after_request: true
     #
-    # Sunspot::Rails uses the configuration to set up the Solr connection, as
+    # Sunspot::Mock uses the configuration to set up the Solr connection, as
     # well as for starting Solr with the appropriate port using the
     # <code>rake sunspot:solr:start</code> task.
     #
@@ -198,7 +198,7 @@ module Sunspot #:nodoc:
       # The default log_level that should be passed to solr. You can
       # change the individual log_levels in the solr admin interface.
       # If no level is specified in the sunspot configuration file,
-      # use a level similar to Rails own logging level.
+      # use a level similar to the app's own logging level.
       #
       # ==== Returns
       #
@@ -256,9 +256,9 @@ module Sunspot #:nodoc:
 
 
       #
-      # The solr home directory. Sunspot::Rails expects this directory
+      # The solr home directory. Sunspot::Mock expects this directory
       # to contain a config, data and pids directory. See
-      # Sunspot::Rails::Server.bootstrap for more information.
+      # Sunspot::Mock::Server.bootstrap for more information.
       #
       # ==== Returns
       #
@@ -335,7 +335,7 @@ module Sunspot #:nodoc:
       private
 
       #
-      # Logging in rails_root/log as solr_<environment>.log as a
+      # Logging in /log as solr_<environment>.log as a
       # default.
       #
       # ===== Returns
@@ -360,7 +360,7 @@ module Sunspot #:nodoc:
       end
 
       #
-      # Memoized hash of configuration options for the current Rails environment
+      # Memoized hash of configuration options for the current environment
       # as specified in config/sunspot.yml
       #
       # ==== Returns

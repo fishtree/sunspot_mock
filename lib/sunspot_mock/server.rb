@@ -49,7 +49,7 @@ module Sunspot
       end
 
       #
-      # Log file for Solr. File is in the rails log/ directory.
+      # Log file for Solr. File is in the log/ directory.
       #
       def log_file
         File.join(Dir.pwd, 'log', "sunspot-solr-#{ENV['RACK_ENV']}.log")
@@ -62,33 +62,16 @@ module Sunspot
         configuration.memory
       end
 
-      def hostname
-        configuration.hostname
+      def url        
+         builder = configuration.scheme == 'http' ? URI::HTTP : URI::HTTPS
+         builder.build(
+          :host => configuration.hostname,
+          :port => configuration.port,
+          :path => configuration.path,
+          :userinfo => configuration.userinfo
+        ).to_s
       end
 
-      def scheme
-        configuration.scheme
-      end
-
-      def path
-        configuration.path
-      end
-
-      def userinfo
-        configuration.userinfo
-      end      
-
-      def read_timeout
-        configuration.read_timeout
-      end      
-
-      def open_timeout
-        configuration.open_timeout
-      end      
-
-      def proxy
-        configuration.proxy
-      end      
 
       private
 
@@ -99,7 +82,7 @@ module Sunspot
       #
       # ==== returns
       #
-      # Sunspot::Rails::Configuration:: configuration
+      # Sunspot::Mock::Configuration:: configuration
       #
       def configuration
         @configuration ||= Sunspot::Mock::Configuration.new

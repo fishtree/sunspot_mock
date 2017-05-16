@@ -30,17 +30,10 @@ class TimeOutError < StandardError; end;
     def init_session
 
         config = Sunspot::Configuration.build                
-        builder = server.scheme == 'http' ? URI::HTTP : URI::HTTPS
-        config.solr.url = builder.build(
-          :host => server.hostname,
-          :port => server.port,
-          :path => server.path,
-          :userinfo => server.userinfo
-        ).to_s
+        config.solr.url =  server.url
         # config.solr.read_timeout = server.read_timeout
         # config.solr.open_timeout = server.open_timeout
         # config.solr.proxy = server.proxy
-        # config.solr.url = server.hostname
 
         original_sunspot_session #As prevention that this is the first test (so original version will be saved for later stubs)
         Sunspot.session =  Sunspot::SessionProxy::ThreadLocalSessionProxy.new(config)
